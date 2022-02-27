@@ -29,7 +29,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ToggleButton
-        android:id="@+id/button3"
+        android:id="@+id/snareButton3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="9dp"
@@ -37,10 +37,10 @@
         android:text="@string/toggle_button"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button2" />
+        app:layout_constraintStart_toEndOf="@+id/snareButton2" />
 
     <ToggleButton
-        android:id="@+id/button2"
+        android:id="@+id/snareButton2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="11dp"
@@ -48,10 +48,10 @@
         android:text="@string/toggle_button"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button1" />
+        app:layout_constraintStart_toEndOf="@+id/snareButton1" />
 
     <ToggleButton
-        android:id="@+id/button4"
+        android:id="@+id/snareButton4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
@@ -62,7 +62,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ToggleButton
-        android:id="@+id/button1"
+        android:id="@+id/snareButton1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="19dp"

@@ -4,22 +4,22 @@ import android.app.Activity;
 import android.content.Context;
 import android.media.AsyncPlayer;
 import android.media.AudioAttributes;
-import android.media.AudioFormat;
-import android.media.AudioTrack;
-import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import java.util.concurrent.Executors;
 
 public class Sampler {
-
     //SoundPool soundPool;
-    AsyncPlayer mediaPlayer;
+    AsyncPlayer snareAPlayer;
+    AsyncPlayer kickAPlayer;
+
     public boolean playing;
 
     private Context myContext;
@@ -27,10 +27,19 @@ public class Sampler {
 
     private ImageButton pauseButton;
     private ImageButton playButton;
-    private ToggleButton button1;
-    private ToggleButton button2;
-    private ToggleButton button3;
-    private ToggleButton button4;
+    private Button clearButton;
+
+    private ToggleButton snareButton1;
+    private ToggleButton snareButton2;
+    private ToggleButton snareButton3;
+    private ToggleButton snareButton4;
+
+    private ToggleButton kickButton1;
+    private ToggleButton kickButton2;
+    private ToggleButton kickButton3;
+    private ToggleButton kickButton4;
+
+    private TextView tempoBarText;
 
     private int tempo;
 
@@ -46,17 +55,20 @@ public class Sampler {
         this.myContext = appContext;
         this.parentActivity = parentActivity;
 
-        //Get these from the UI
-        tempo = 144;
-        beatDiv = 2;
-
         playButton = parentActivity.findViewById(R.id.playButton);
         pauseButton = parentActivity.findViewById(R.id.pauseButton);
 
-        button1 = parentActivity.findViewById(R.id.button1);
-        button2 = parentActivity.findViewById(R.id.button2);
-        button3 = parentActivity.findViewById(R.id.button3);
-        button4 = parentActivity.findViewById(R.id.button4);
+        snareButton1 = parentActivity.findViewById(R.id.snareButton1);
+        snareButton2 = parentActivity.findViewById(R.id.snareButton2);
+        snareButton3 = parentActivity.findViewById(R.id.snareButton3);
+        snareButton4 = parentActivity.findViewById(R.id.snareButton4);
+
+        kickButton1 = parentActivity.findViewById(R.id.kickButton1);
+        kickButton2 = parentActivity.findViewById(R.id.kickButton2);
+        kickButton3 = parentActivity.findViewById(R.id.kickButton3);
+        kickButton4 = parentActivity.findViewById(R.id.kickButton4);
+
+        tempoBarText = parentActivity.findViewById(R.id.tempoBarText);
 
         playing = true;
 
@@ -65,85 +77,74 @@ public class Sampler {
                 .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                 .build();
 
+        //Get these from the UI
+        CharSequence text = tempoBarText.getText();
+        tempo = Integer.parseInt(text.toString());
+        beatDiv = ((RadioButton) (parentActivity
+                .findViewById(R.id.quarterRadio)))
+                .isChecked() ? 1 : 2;
+
     }
 
     public void pause() {
         playing = false;
-
-//        if (soundPool != null) {
-//            soundPool.release();
-//            soundPool = null;
-//        }
-
-//        if (mediaPlayer != null) {
-//            mediaPlayer.release();
-//            mediaPlayer = null;
-//        }
     }
 
     public void play() {
         playing = true;
+        beatDiv = ((RadioButton) (parentActivity
+                .findViewById(R.id.quarterRadio)))
+                .isChecked() ? 1 : 2;
+        CharSequence text = tempoBarText.getText();
+        tempo = Integer.parseInt(text.toString());
         execute();
     }
 
+    public void clear() {
+        snareButton1.setChecked(false);
+        snareButton2.setChecked(false);
+        snareButton3.setChecked(false);
+        snareButton4.setChecked(false);
+
+        kickButton1.setChecked(false);
+        kickButton2.setChecked(false);
+        kickButton3.setChecked(false);
+        kickButton4.setChecked(false);
+    }
+
     public void execute() {
-        //soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+        snareAPlayer = new AsyncPlayer("SNARE");
+        kickAPlayer = new AsyncPlayer("KICK");
+        processSnareTrack();
+        processKickTrack();
 
-        //snareId = soundPool.load(myContext, R.raw.snare, 1);
+    }
 
-        //mediaPlayer = MediaPlayer.create(myContext, R.raw.snare);
-
-
-        mediaPlayer = new AsyncPlayer("SNARE");
-
+    private void processSnareTrack() {
         Executors.newSingleThreadExecutor().execute(() -> {
             // Simulating long-running operation
             while (playing) {
-                if (button1.isChecked()) {
-                    mediaPlayer.play(myContext,
-                            Uri.parse("android.resource://" +
-                                    parentActivity.getPackageName() +
-                                    "/"
-                                    + R.raw.snare),
-                            false,
-                            attributes);
-                    Log.i("DRUMMER", "HIT 1");
+                if (snareButton1.isChecked()) {
+                    playSnare(snareAPlayer);
+                    Log.i("SNARE", "HIT 1");
                 }
                 sleep();
 
-                if (button2.isChecked()) {
-                    mediaPlayer.play(myContext,
-                            Uri.parse("android.resource://" +
-                                    parentActivity.getPackageName() +
-                                    "/"
-                                    + R.raw.snare),
-                            false,
-                            attributes);
-                    Log.i("DRUMMER", "HIT 2");
+                if (snareButton2.isChecked()) {
+                    playSnare(snareAPlayer);
+                    Log.i("SNARE", "HIT 2");
                 }
                 sleep();
 
-                if (button3.isChecked()) {
-                    mediaPlayer.play(myContext,
-                            Uri.parse("android.resource://" +
-                                    parentActivity.getPackageName() +
-                                    "/"
-                                    + R.raw.snare),
-                            false,
-                            attributes);
-                    Log.i("DRUMMER", "HIT 3");
+                if (snareButton3.isChecked()) {
+                    playSnare(snareAPlayer);
+                    Log.i("SNARE", "HIT 3");
                 }
                 sleep();
 
-                if (button4.isChecked()) {
-                    mediaPlayer.play(myContext,
-                            Uri.parse("android.resource://" +
-                                    parentActivity.getPackageName() +
-                                    "/"
-                                    + R.raw.snare),
-                            false,
-                            attributes);
-                    Log.i("DRUMMER", "HIT 4");
+                if (snareButton4.isChecked()) {
+                    playSnare(snareAPlayer);
+                    Log.i("SNARE", "HIT 4");
                 }
                 sleep();
 
@@ -153,6 +154,62 @@ public class Sampler {
 
             }
         });
+    }
+
+    private void processKickTrack() {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            // Simulating long-running operation
+            while (playing) {
+                if (kickButton1.isChecked()) {
+                    playKick(kickAPlayer);
+                    Log.i("KICK", "HIT 1");
+                }
+                sleep();
+
+                if (kickButton2.isChecked()) {
+                    playKick(kickAPlayer);
+                    Log.i("KICK", "HIT 2");
+                }
+                sleep();
+
+                if (kickButton3.isChecked()) {
+                    playKick(kickAPlayer);
+                    Log.i("KICK", "HIT 3");
+                }
+                sleep();
+
+                if (kickButton4.isChecked()) {
+                    playKick(kickAPlayer);
+                    Log.i("KICK", "HIT 4");
+                }
+                sleep();
+
+                if (pauseButton.isPressed()) {
+                    playing = false;
+                }
+
+            }
+        });
+    }
+
+    private void playSnare(AsyncPlayer sPlayer) {
+        sPlayer.play(myContext,
+                Uri.parse("android.resource://" +
+                        parentActivity.getPackageName() +
+                        "/"
+                        + R.raw.snare),
+                false,
+                attributes);
+    }
+
+    private void playKick(AsyncPlayer sPlayer) {
+        sPlayer.play(myContext,
+                Uri.parse("android.resource://" +
+                        parentActivity.getPackageName() +
+                        "/"
+                        + R.raw.kick),
+                false,
+                attributes);
     }
 
     private void sleep() {

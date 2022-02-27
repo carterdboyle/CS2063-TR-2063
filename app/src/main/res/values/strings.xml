@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">TR2063DrumSequencer</string>
+    <string name="toggle_button">Toggle Button</string>
+    <string name="input_text">Input a sequence</string>
+    <string name="snare_text">Snare</string>
+    <string name="kick_text">Kick</string>
+    <string name="clear_text">Clear pattern</string>
+    <string name="quarter_text">Quarter notes</string>
+    <string name="eighth_text">Eighth notes</string>
+    <string name="tempo_text">Tempo</string>
 </resources>
