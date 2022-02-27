@@ -15,35 +15,26 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        playButton = (ImageButton) findViewById(R.id.playButton);
-        pauseButton = (ImageButton) findViewById(R.id.pauseButton);
-
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playButton.setVisibility(View.INVISIBLE);
-                playSeq(v);
-            }
-        });
-
-        pauseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pauseSeq(v);
-                playButton.setVisibility(View.VISIBLE);
-            }
-        });
+        playButton = findViewById(R.id.playButton);
+        pauseButton = findViewById(R.id.pauseButton);
 
         mySample = new Sampler(this, this);
 
-    }
+        playButton.setOnClickListener(v -> {
+            playButton.setEnabled(false);
+            playSeq(v);
+        });
 
-    public void playSeq(View v) {
-        mySample.play();
+        pauseButton.setOnClickListener(v -> {
+            pauseSeq(v);
+            playButton.setEnabled(true);
+        });
     }
 
     public void pauseSeq(View v) {
         mySample.pause();
     }
+
+    public void playSeq(View v) { mySample.play(); }
 
 }
