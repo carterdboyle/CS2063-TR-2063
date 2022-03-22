@@ -1,3 +1,25 @@
+/*******************************************************************************
+
+   Copyright: 2011 Android Aalto Community
+
+   This file is part of SoundFuse.
+
+   SoundFuse is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   SoundFuse is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with SoundFuse; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+ ******************************************************************************/
+
 package ca.unb.mobiledev.tr2063drumsequencer;
 
 import android.app.Activity;
@@ -9,46 +31,30 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Layout;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.view.WindowMetrics;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import androidx.annotation.RequiresApi;
 
 import ca.unb.mobiledev.tr2063drumsequencer.sequencer.Sequencer;
 
-public class MainActivity extends Activity {
+public class BoardActivity extends Activity {
     public static final int TOTAL_BEATS = 8;
 
     public static final int TOTAL_SAMPLES = 4;
-
-    public Sampler mySample;
-    public ImageButton playButton;
-    public ImageButton pauseButton;
-    public Button clearButton;
-
-    public RadioButton quarterRadioButton;
-    public RadioButton eighthRadioButton;
-
-    public SeekBar tempoBar;
-
-    public TextView tempoText;
-    public TextView tempoBarText;
 
     FrameLayout rootLayout;
 
@@ -62,9 +68,9 @@ public class MainActivity extends Activity {
 
     LinearLayout boardLayouts[] = new LinearLayout[TOTAL_SAMPLES];
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    /** Called when the activity is first created. */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         sequencer = new Sequencer(this, TOTAL_SAMPLES, TOTAL_BEATS);
@@ -78,74 +84,8 @@ public class MainActivity extends Activity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_main);
-
-        playButton = findViewById(R.id.playButton);
-        pauseButton = findViewById(R.id.pauseButton);
-        clearButton = findViewById(R.id.clearButton);
-        eighthRadioButton = findViewById(R.id.eighthRadio);
-        quarterRadioButton = findViewById(R.id.quarterRadio);
-        tempoBar = findViewById(R.id.tempoBar);
-        tempoBarText = findViewById(R.id.tempoBarText);
-        tempoText = findViewById(R.id.tempoText);
-
-        quarterRadioButton.setChecked(true);
-
-        tempoBar.setMin(60);
-        tempoBar.setMax(260);
-        tempoBar.setProgress(120);
-
-        tempoBarText.setText(tempoBar.getProgress() + "");
-
-        tempoBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                seekBar.setProgress(i);
-                tempoBarText.setText(seekBar.getProgress() + "");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-
-        pauseButton.setOnClickListener(v -> {
-            pauseSeq(v);
-            playButton.setEnabled(true);
-            clearButton.setEnabled(true);
-        });
-
-        quarterRadioButton.setOnClickListener(v -> quarterRadioButton
-                .setChecked(!eighthRadioButton.isChecked()));
-
-        eighthRadioButton.setOnClickListener(v -> eighthRadioButton
-                .setChecked(!quarterRadioButton.isChecked()));
-
-        clearButton.setOnClickListener(this::clearSeq);
-
         prepareBoard();
-
-        //mySample = new Sampler(this, this);
-
-        playButton.setOnClickListener(v -> {
-            playButton.setEnabled(false);
-            clearButton.setEnabled(false);
-            playSeq(v);
-        });
     }
-
-    public void pauseSeq(View v) {
-        mySample.pause();
-    }
-
-    public void playSeq(View v) { mySample.play(); }
-
-    public void clearSeq(View v) { mySample.clear(); }
-
 
     @Override
     public void onPause() {
@@ -173,7 +113,7 @@ public class MainActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.select_sample:
                 // file picker
-                Intent i = new Intent(MainActivity.this, AndroidExplorer.class);
+                Intent i = new Intent(BoardActivity.this, AndroidExplorer.class);
                 startActivityForResult(i, 0);
                 break;
             case R.id.toggle_sequencer:
@@ -234,24 +174,25 @@ public class MainActivity extends Activity {
 
     private void prepareBoard() {
         createLayouts();
+        setContentView(rootLayout);
         createBoardButtons();
     }
 
     private void createLayouts() {
         //rootLayout = new FrameLayout(this);
 
-        rootLayout = findViewById(R.id.frame_layout);
+        rootLayout = (FrameLayout) View.inflate(this, R.layout.board, null);
 
         mainLayout = new LinearLayout(this);
 
         mainLayout.setOrientation(LinearLayout.VERTICAL);
-        mainLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
+        mainLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT));
 
         for (int samplePos = 0; samplePos < TOTAL_SAMPLES; samplePos++) {
             boardLayouts[samplePos] = new LinearLayout(this);
-            boardLayouts[samplePos].setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT, 1));
+            boardLayouts[samplePos].setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                    LayoutParams.MATCH_PARENT, 1));
             boardLayouts[samplePos].setBackgroundColor(Color.rgb(255, 0, 0));
             mainLayout.addView(boardLayouts[samplePos]);
         }
@@ -260,9 +201,14 @@ public class MainActivity extends Activity {
     }
 
     private void createBoardButtons() {
-        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_layout);
-        int width = frameLayout.getLayoutParams().width;
-        int height = frameLayout.getLayoutParams().height;
+        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay();
+        Point size = new Point();
+
+        display.getRealSize(size);
+
+        int height = size.y;
+        int width = size.x;
 
         int buttonWidth = width / TOTAL_BEATS;
         int buttonHeight = height / TOTAL_SAMPLES;
@@ -282,19 +228,12 @@ public class MainActivity extends Activity {
                 samplersButtons[samplePos][beatPos].setTextOff("");
                 samplersButtons[samplePos][beatPos].setTextOn("");
                 samplersButtons[samplePos][beatPos].setText("");
-                samplersButtons[samplePos][beatPos].setBackgroundResource(R.drawable.custom_button);
-                samplersButtons[samplePos][beatPos].setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-                samplersButtons[samplePos][beatPos].setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
+                samplersButtons[samplePos][beatPos].setWidth(LayoutParams.WRAP_CONTENT);
+                samplersButtons[samplePos][beatPos].setHeight(LayoutParams.MATCH_PARENT);
                 samplersButtons[samplePos][beatPos].setId(TOTAL_BEATS * samplePos + beatPos);
                 samplersButtons[samplePos][beatPos].setOnClickListener(samplerListener);
                 boardLayouts[samplePos].addView(samplersButtons[samplePos][beatPos]);
             }
         }
     }
-
-
-    public int convertPixelsToDips(float pxs) {
-        return (int) (pxs / getResources().getDisplayMetrics().density);
-    }
-
 }

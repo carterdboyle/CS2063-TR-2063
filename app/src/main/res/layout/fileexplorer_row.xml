@@ -21,15 +21,10 @@
    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
  ******************************************************************************/
--->
-<resources>
-    <string name="app_name">TR2063DrumSequencer</string>
-    <string name="toggle_button">Toggle Button</string>
-    <string name="input_text">Input a sequence</string>
-    <string name="snare_text">Snare</string>
-    <string name="kick_text">Kick</string>
-    <string name="clear_text">Clear pattern</string>
-    <string name="quarter_text">Quarter notes</string>
-    <string name="eighth_text">Eighth notes</string>
-    <string name="tempo_text">Tempo</string>
-</resources>
+ -->
+<TextView 
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/rowtext"
+  android:layout_width="fill_parent"
+     android:layout_height="25px"
+     android:textSize="23sp" />
