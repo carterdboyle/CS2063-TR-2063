@@ -8,14 +8,18 @@
         <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1595" />
         <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/drawable/timepicker_down_btn.xml" value="0.232" />
         <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/drawable/timepicker_input.xml" value="0.22" />
-        <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/layout-land/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/layout-land/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/layout/activity_soundbank_creation.xml" value="0.19947916666666668" />
         <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/layout/add_columns.xml" value="0.22552083333333334" />
         <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/layout/board.xml" value="0.22552083333333334" />
         <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/layout/board_layout.xml" value="0.19947916666666668" />
         <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/layout/fileexplorer_main.xml" value="0.22552083333333334" />
         <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/layout/fileexplorer_row.xml" value="0.22552083333333334" />
         <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/layout/number_picker.xml" value="0.22552083333333334" />
+        <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/layout/record_activity.xml" value="0.19947916666666668" />
+        <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/layout/soundbank_list_layout.xml" value="0.19947916666666668" />
+        <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/layout/soundbank_selector.xml" value="0.22" />
         <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/menu/menu.xml" value="0.21302083333333333" />
         <entry key="..\:/Users/carte/git/CS2063-TR-2063/app/src/main/res/xml/preferences.xml" value="0.22552083333333334" />
       </map>

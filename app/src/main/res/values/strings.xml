@@ -32,4 +32,7 @@
     <string name="quarter_text">Quarter notes</string>
     <string name="eighth_text">Eighth notes</string>
     <string name="tempo_text">Tempo</string>
+    <string name="sound_library_text">Please select a sound bank:</string>
+    <string name="remove_button_text">Remove bank</string>
+    <string name="insert_button_text">Insert bank</string>
 </resources>

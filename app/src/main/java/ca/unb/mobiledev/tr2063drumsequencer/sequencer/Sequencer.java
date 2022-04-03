@@ -23,8 +23,11 @@
 package ca.unb.mobiledev.tr2063drumsequencer.sequencer;
 
 import android.content.Context;
+import android.media.AsyncPlayer;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.net.Uri;
 
 /**
  * @class Sequencer This class provides the functionality for delivering
@@ -66,6 +69,11 @@ public class Sequencer {
 
     private Matrix matrix;
 
+    private AudioAttributes attributes;
+    private AsyncPlayer[] players;
+
+    private Uri[] uris;
+
     public interface OnBPMListener {
         /**
          * This method is called every time there's a new beat.
@@ -87,7 +95,7 @@ public class Sequencer {
      * Concrete constructor.
      * 
      * @param nsamples Number of samples (rows).
-     * @param ndivisions Number of time divisions (columns).
+     * @param nbeats Number of time divisions (columns).
      */
     public Sequencer(Context ctx, int nsamples, int nbeats) {
         context = ctx;
@@ -95,7 +103,14 @@ public class Sequencer {
         beats = nbeats;
         bpm = 120;
         samples = new int[nsamples];
-        sound = new SoundPool(nsamples, AudioManager.STREAM_MUSIC, 0);
+        //sound = new SoundPool(nsamples, AudioManager.STREAM_MUSIC, 0);
+        players = new AsyncPlayer[rows];
+        uris = new Uri[rows];
+
+        attributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build();
         matrix = new Matrix(ctx, rows, beats);
     }
 
@@ -106,7 +121,12 @@ public class Sequencer {
      * @param sampleSrc Identifier of the raw resource.
      */
     public void setSample(int id, int sampleSrc) {
-        samples[id] = sound.load(context, sampleSrc, 1);
+        //samples[id] = sound.load(context, sampleSrc, 1);
+        players[id] = new AsyncPlayer(String.valueOf(id));
+        uris[id] = Uri.parse("android.resource://" +
+                context.getPackageName() +
+                "/"
+                + sampleSrc);
     }
 
     /**
@@ -114,15 +134,17 @@ public class Sequencer {
      * 
      * @param path String with the path to the sound file.
      */
-    public void setSample(int id, String path) {
-        samples[id] = sound.load(path, 1);
+    public void setSample(int id, Uri path) {
+        //samples[id] = sound.load(path, 1);
+        players[id] = new AsyncPlayer(String.valueOf(id));
+        uris[id] = path;
     }
 
     /**
      * Set a cell to enabled.
      * 
      * @param sampleId The row of the matrix where the cell is.
-     * @param betaId The column of the matrix where the cell is.
+     * @param beatId The column of the matrix where the cell is.
      */
     public void enableCell(int sampleId, int beatId) {
         matrix.setCellValue(sampleId, beatId, 1);
@@ -132,23 +154,11 @@ public class Sequencer {
      * Set a cell to enabled.
      * 
      * @param sampleId The row of the matrix where the cell is.
-     * @param betaId The column of the matrix where the cell is.
+     * @param beatId The column of the matrix where the cell is.
      */
     public void disableCell(int sampleId, int beatId) {
         matrix.setCellValue(sampleId, beatId, 0);
     }
-
-    /**
-     * Private method to enable/disable a cell.
-     * 
-     * @param sampleId The row of the matrix where the cell is.
-     * @param beatId The column of the matrix where the cell is.
-     * @param value 0 means disabled, >= 1 enabled.
-     */
-    /*
-     * private void setCell(int sampleId, int beatId, int value) {
-     * matrix[sampleId][beatId] = value; }
-     */
 
     public void setOnBPMListener(OnBPMListener l) {
         this.mOnBPMListener = l;
@@ -190,7 +200,10 @@ public class Sequencer {
                     for (int i = 0; i < rows; i++) {
                         System.out.println("Row-COl " + i + "-" + count);
                         if (matrix.getCellValue(i, count) != 0)
-                            sound.play(samples[i], 100, 100, 1, 0, 1);
+                            //sound.play(samples[i], 100, 100, 1, 0, 1);
+                            players[i].play(context, uris[i],
+                                    false,
+                                    attributes);
                     }
 
                     count = (count + 1) % beats;
@@ -208,6 +221,14 @@ public class Sequencer {
         playing = true;
         Thread thandler = new Thread(playback);
         thandler.start();
+    }
+
+    public void clear() {
+        for (int rows = 0; rows < samples.length; rows++)  {
+            for (int cols = 0; cols < beats; cols++) {
+                disableCell(rows, cols);
+            }
+        }
     }
 
     /**

@@ -30,15 +30,20 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+
+import ca.unb.mobiledev.tr2063drumsequencer.soundbank.SoundbankCreationActivity;
 
 public class AndroidExplorer extends ListActivity {
 
@@ -46,11 +51,11 @@ public class AndroidExplorer extends ListActivity {
 
     private List<String> path = null;
 
-    private String root = "/sdcard"; // default was root
+    private String root = "//"; // default was root
 
     private TextView myPath;
 
-    private String regexp = "(?i:.*.(ogg|mp3))"; // available file extensions
+    private String regexp = "(?i:.*.(ogg|mp3|3gp|wav))"; // available file extensions
 
     /** Called when the activity is first created. */
     @Override
@@ -58,6 +63,7 @@ public class AndroidExplorer extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fileexplorer_main);
         myPath = (TextView) findViewById(R.id.path);
+        root = getApplicationContext().getFilesDir().getAbsolutePath();
         getDir(root);
     }
 
@@ -94,6 +100,28 @@ public class AndroidExplorer extends ListActivity {
             }
         }
 
+        //Add in raw resources as well
+        List<String> resIds = new ArrayList<>();
+        Field[] fields = R.raw.class.getFields();
+        for (Field field : fields) {
+            try {
+                resIds.add(field.getName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (String s : resIds) {
+            item.add(s);
+            int i = getResources().getIdentifier(s, "raw", getPackageName());
+            String completeString = "android.resource:" + "//" +
+                    getApplicationContext().getPackageName() +
+                    "/"
+                    + i;
+            path.add(completeString);
+        }
+
+
         ArrayAdapter<String> fileList = new ArrayAdapter<String>(this, R.layout.fileexplorer_row,
                 item);
         setListAdapter(fileList);
@@ -117,10 +145,9 @@ public class AndroidExplorer extends ListActivity {
                         }).show();
             }
         } else {
-            // Found a supported file type. Return the full path of the file to
-            // the caller activity (BoardActivity).
-            Intent resultIntent = new Intent(getApplicationContext(), BoardActivity.class);
-            resultIntent.putExtra("path", file.getPath());
+            // Found a supported file type. Return the full path of the file to caller activity
+            Intent resultIntent = new Intent(getApplicationContext(), SoundbankCreationActivity.class);
+            resultIntent.putExtra("path", path.get(position));
             setResult(Activity.RESULT_OK, resultIntent);
             finish();
         }
