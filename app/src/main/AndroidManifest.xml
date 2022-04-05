@@ -30,15 +30,7 @@
             android:exported="true" >
         </activity>
         <activity
-            android:name=".Preferences"
-            android:exported="true" >
-        </activity>
-        <activity
             android:name=".AndroidExplorer"
-            android:exported="true" >
-        </activity>
-        <activity
-            android:name=".AddColumnPicker"
             android:exported="true" >
         </activity>
     </application>

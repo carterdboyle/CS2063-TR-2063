@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".SequencerActivity">
 
+    <!--
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
@@ -13,168 +15,200 @@
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/> -->
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/input_text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.464"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.247" />
+        android:layout_weight="1" />
 
-    <Button
-        android:id="@+id/clearButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="168dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/clear_text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_marginBottom="15dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
 
-    <ImageButton
-        android:id="@+id/playButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="216dp"
-        android:layout_marginBottom="16dp"
-        android:onClick="playSeq"
-        android:src="@android:drawable/ic_media_play"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <Button
+            android:id="@+id/library_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Library" />
 
-    <ImageButton
-        android:id="@+id/pauseButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginBottom="16dp"
-        android:onClick="pauseSeq"
-        android:src="@android:drawable/ic_media_pause"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/playButton" />
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/input_text"
+            android:textAlignment="center" />
 
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="136dp"
-        android:layout_marginBottom="268dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <RadioButton
-            android:id="@+id/quarterRadio"
-            android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tempoText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/tempo_text" />
+
+            <SeekBar
+                android:id="@+id/tempoBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/tempoBarText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                tools:text="120" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="8"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:text="@string/quarter_text" />
+            android:layout_weight="0"
+            android:orientation="vertical">
 
-        <RadioButton
-            android:id="@+id/eighthRadio"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/eighth_text" />
-    </RadioGroup>
+            <EditText
+                android:id="@+id/textview_1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:imeOptions="actionDone"
+                android:text="HH Open"
+                android:textAlignment="viewEnd"
+                android:textSize="12sp" />
 
-    <FrameLayout
-        android:id="@+id/frame_layout"
-        android:layout_width="473dp"
-        android:layout_height="162dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="38dp"
-        app:layout_constraintBottom_toTopOf="@+id/playButton"
-        app:layout_constraintEnd_toEndOf="parent">
+            <EditText
+                android:id="@+id/textview_2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="HH Closed"
+                android:textAlignment="viewEnd"
+                android:textSize="12sp" />
 
-        <androidx.gridlayout.widget.GridLayout
-            android:id="@+id/grid_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </FrameLayout>
+            <EditText
+                android:id="@+id/textview_3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/snare_text"
+                android:textAlignment="viewEnd"
+                android:textSize="12sp" />
 
-    <LinearLayout
-        android:layout_width="89dp"
-        android:layout_height="159dp"
-        android:layout_marginEnd="7dp"
-        android:layout_marginBottom="105dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/frame_layout">
+            <EditText
+                android:id="@+id/textview_4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/kick_text"
+                android:textAlignment="viewEnd"
+                android:textSize="12sp" />
+        </LinearLayout>
 
-        <EditText
-            android:id="@+id/textview_1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="HH Open"
-            android:textAlignment="viewEnd"
-            android:textSize="12sp" />
+        <FrameLayout
+            android:id="@+id/frame_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="8"
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <EditText
-            android:id="@+id/textview_2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="HH Closed"
-            android:textAlignment="viewEnd"
-            android:textSize="12sp" />
+            <androidx.gridlayout.widget.GridLayout
+                android:id="@+id/grid_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/textview_3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/snare_text"
-            android:textAlignment="viewEnd"
-            android:textSize="12sp" />
+            </androidx.gridlayout.widget.GridLayout>
+        </FrameLayout>
 
-        <EditText
-            android:id="@+id/textview_4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/kick_text"
-            android:textAlignment="viewEnd"
-            android:textSize="12sp" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:gravity="left"
+            android:orientation="vertical">
+
+            <ToggleButton
+                android:id="@+id/a_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_button2"
+                android:layout_weight="1"
+                android:text="A" />
+
+            <ToggleButton
+                android:id="@+id/b_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_button2"
+                android:layout_weight="1"
+                android:text="B" />
+
+            <ToggleButton
+                android:id="@+id/c_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_button2"
+                android:layout_weight="1"
+                android:text="C" />
+
+            <ToggleButton
+                android:id="@+id/d_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_button2"
+                android:layout_weight="1"
+                android:text="D" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="125dp"
-        android:layout_height="57dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="1dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/frame_layout"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tempoText"
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/playButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/tempo_text" />
+            android:onClick="playSeq"
+            android:src="@android:drawable/ic_media_play" />
 
-        <SeekBar
-            android:id="@+id/tempoBar"
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/pauseButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1" />
+            android:onClick="pauseSeq"
+            android:src="@android:drawable/ic_media_pause" />
 
-        <TextView
-            android:id="@+id/tempoBarText"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/clearButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            tools:text="120" />
+            android:text="@string/clear_text" />
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

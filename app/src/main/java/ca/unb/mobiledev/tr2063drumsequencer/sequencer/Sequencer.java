@@ -45,7 +45,7 @@ import android.net.Uri;
  * 
  *        This structure is contained in the class Matrix.
  * @see Matrix
- * @author claudio
+ * @author claudio -- edited by Carter Boyle for Async playback
  */
 public class Sequencer {
     // attributes
@@ -198,7 +198,7 @@ public class Sequencer {
                         mOnBPMListener.onBPM(count);
                     long millis = System.currentTimeMillis();
                     for (int i = 0; i < rows; i++) {
-                        System.out.println("Row-COl " + i + "-" + count);
+                        //System.out.println("Row-COl " + i + "-" + count);
                         if (matrix.getCellValue(i, count) != 0)
                             //sound.play(samples[i], 100, 100, 1, 0, 1);
                             players[i].play(context, uris[i],
@@ -207,7 +207,7 @@ public class Sequencer {
                     }
 
                     count = (count + 1) % beats;
-                    long next = (60 * 1000) / bpm;
+                    long next = (60 * 1000) / bpm / 2;
                     try {
                         Thread.sleep(next - (System.currentTimeMillis() - millis));
                     } catch (InterruptedException e) {

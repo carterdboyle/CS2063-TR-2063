@@ -23,6 +23,7 @@
 package ca.unb.mobiledev.tr2063drumsequencer;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,9 +37,13 @@ public class SamplerToggleListener implements OnClickListener {
 
     int beats;
 
-    public SamplerToggleListener(Sequencer sequencer, Context ctx, int samples, int beats) {
+    SharedPreferences prefs;
+
+    public SamplerToggleListener(Sequencer sequencer, SharedPreferences prefs,
+                                 Context ctx, int samples, int beats) {
         this.sequencer = sequencer;
         this.beats = beats;
+        this.prefs = prefs;
     }
 
     @Override
@@ -56,5 +61,9 @@ public class SamplerToggleListener implements OnClickListener {
             sequencer.enableCell(samplerId, beatId);
         else
             sequencer.disableCell(samplerId, beatId);
+
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("cell" + buttonId, currentButton.isChecked());
+        editor.commit();
     }
 }

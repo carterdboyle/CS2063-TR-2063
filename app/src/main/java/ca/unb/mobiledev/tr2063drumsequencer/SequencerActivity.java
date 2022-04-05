@@ -19,8 +19,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -47,16 +49,22 @@ import ca.unb.mobiledev.tr2063drumsequencer.soundbank.SoundbankActivity;
 
 public class SequencerActivity extends AppCompatActivity {
     public static int numberOfBeats = 8;
-
+    public static int defaultTempo = 120;
     public static int numberOfSamples = 4;
+    public static int numberOfPatterns = 4;
 
-    public Sampler mySample;
+    private int selectedPattern;
+
     public ImageButton playButton;
     public ImageButton pauseButton;
     public Button clearButton;
+    public Button libraryButton;
 
-    public RadioButton quarterRadioButton;
-    public RadioButton eighthRadioButton;
+    public ToggleButton[] patternButtons;
+
+    //Defunct
+    //public RadioButton quarterRadioButton;
+    //public RadioButton eighthRadioButton;
 
     public SeekBar tempoBar;
 
@@ -80,6 +88,9 @@ public class SequencerActivity extends AppCompatActivity {
 
     LinearLayout boardLayouts[] = new LinearLayout[numberOfSamples];
 
+    SharedPreferences sharedPreferences;
+    SharedPreferences patternPreferences;
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,10 +98,13 @@ public class SequencerActivity extends AppCompatActivity {
 
         // Do a sharedpreferences save of this and tempo as well
         sequencer = new Sequencer(this, numberOfSamples, numberOfBeats);
-        sequencer.setSample(0, R.raw.kick);
-        sequencer.setSample(1, R.raw.hhc);
-        sequencer.setSample(2, R.raw.hho);
-        sequencer.setSample(3, R.raw.snare);
+
+        //Get sharedPreferences
+        sharedPreferences = getSharedPreferences("sequencer", 0);
+
+        int defaultPattern = 0; //Pattern A;
+        selectedPattern = sharedPreferences.getInt("pattern", defaultPattern);
+        loadPatternPreferences(selectedPattern);
 
         // Use the whole device screen.
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -99,23 +113,149 @@ public class SequencerActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        Toolbar myToolbar = findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
+        //No toolbar needed
+        //Toolbar myToolbar = findViewById(R.id.my_toolbar);
+        //setSupportActionBar(myToolbar);
 
         playButton = findViewById(R.id.playButton);
         pauseButton = findViewById(R.id.pauseButton);
         clearButton = findViewById(R.id.clearButton);
-        eighthRadioButton = findViewById(R.id.eighthRadio);
-        quarterRadioButton = findViewById(R.id.quarterRadio);
+        libraryButton = findViewById(R.id.library_button);
+
+        //eighthRadioButton = findViewById(R.id.eighthRadio);
+        //quarterRadioButton = findViewById(R.id.quarterRadio);
         tempoBar = findViewById(R.id.tempoBar);
         tempoBarText = findViewById(R.id.tempoBarText);
         tempoText = findViewById(R.id.tempoText);
 
-        quarterRadioButton.setChecked(true);
+        //quarterRadioButton.setChecked(true);
+
+
+
+        //Set the names of the tracks
+        textViewRes1 = findViewById(R.id.textview_1);
+        textViewRes2 = findViewById(R.id.textview_2);
+        textViewRes3 = findViewById(R.id.textview_3);
+        textViewRes4 = findViewById(R.id.textview_4);
+
+//        quarterRadioButton.setOnClickListener(v -> quarterRadioButton
+//                .setChecked(!eighthRadioButton.isChecked()));
+//
+//        eighthRadioButton.setOnClickListener(v -> eighthRadioButton
+//                .setChecked(!quarterRadioButton.isChecked()));
+
+        loadOtherConfigs();
+
+        clearButton.setOnClickListener(this::clearSeq);
+        libraryButton.setOnClickListener(this::onLibraryButtonClick);
+
+        prepareBoard();
+
+        playButton.setOnClickListener(v -> {
+            playButton.setVisibility(View.INVISIBLE);
+            clearButton.setEnabled(false);
+            sequencer.play();
+        });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void loadOtherConfigs() {
+        String defaultRes1 = "android.resource:" + "//" +
+                getApplicationContext().getPackageName() + "/" + R.raw.kick;
+        String defaultRes2 = "android.resource:" + "//" +
+                getApplicationContext().getPackageName() + "/" + R.raw.hhc;
+        String defaultRes3 = "android.resource:" + "//" +
+                getApplicationContext().getPackageName() + "/" + R.raw.hho;
+        String defaultRes4 = "android.resource:" + "//" +
+                getApplicationContext().getPackageName() + "/" +  R.raw.snare;
+
+        String res1 = patternPreferences.getString("resId1", defaultRes1);
+        String res2 = patternPreferences.getString("resId2", defaultRes2);
+        String res3 = patternPreferences.getString("resId3", defaultRes3);
+        String res4 = patternPreferences.getString("resId4", defaultRes4);
+
+        int tempo = patternPreferences.getInt("tempo", defaultTempo);
+
+        sequencer.setSample(0, Uri.parse(res1));
+        sequencer.setSample(1, Uri.parse(res2));
+        sequencer.setSample(2, Uri.parse(res3));
+        sequencer.setSample(3, Uri.parse(res4));
+
+        String[] patternLabels = {"A", "B", "C", "D"};
+
+        patternButtons = new ToggleButton[numberOfPatterns];
+        patternButtons[0] = findViewById(R.id.a_button);
+        patternButtons[1] = findViewById(R.id.b_button);
+        patternButtons[2] = findViewById(R.id.c_button);
+        patternButtons[3] = findViewById(R.id.d_button);
+
+        for (int i = 0; i < patternButtons.length; i++ ) {
+            if (i == selectedPattern) {
+                patternButtons[i].setChecked(true);
+            }
+            patternButtons[i].setOnClickListener(this::onPatternButtonClick);
+            patternButtons[i].setText(patternLabels[i]);
+            patternButtons[i].setTextOn(patternLabels[i]);
+            patternButtons[i].setTextOff(patternLabels[i]);
+        }
+
+        textViewRes1.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                SharedPreferences.Editor editor = patternPreferences.edit();
+                String val = String.valueOf(v.getText());
+                editor.putString("textViewRes1Text", val);
+                editor.commit();
+            }
+            return false;
+        });
+
+        textViewRes2.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                SharedPreferences.Editor editor = patternPreferences.edit();
+                String val = String.valueOf(v.getText());
+                editor.putString("textViewRes2Text", val);
+                editor.commit();
+            }
+            return false;
+        });
+
+        textViewRes3.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                SharedPreferences.Editor editor = patternPreferences.edit();
+                String val = String.valueOf(v.getText());
+                editor.putString("textViewRes3Text", val);
+                editor.commit();
+            }
+            return false;
+        });
+
+        textViewRes4.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                SharedPreferences.Editor editor = patternPreferences.edit();
+                String val = String.valueOf(v.getText());
+                editor.putString("textViewRes4Text", val);
+                editor.commit();
+            }
+            return false;
+        });
+
+        String textViewRes1Text = patternPreferences
+                .getString("textViewRes1Text", getProperName(res1));
+        String textViewRes2Text = patternPreferences
+                .getString("textViewRes2Text", getProperName(res2));
+        String textViewRes3Text = patternPreferences
+                .getString("textViewRes3Text", getProperName(res3));
+        String textViewRes4Text = patternPreferences
+                .getString("textViewRes4Text", getProperName(res4));
+
+        textViewRes1.setText(textViewRes1Text);
+        textViewRes2.setText(textViewRes2Text);
+        textViewRes3.setText(textViewRes3Text);
+        textViewRes4.setText(textViewRes4Text);
 
         tempoBar.setMin(60);
         tempoBar.setMax(260);
-        tempoBar.setProgress(120);
+        tempoBar.setProgress(tempo);
 
         tempoBarText.setText(tempoBar.getProgress() + "");
 
@@ -125,6 +265,10 @@ public class SequencerActivity extends AppCompatActivity {
                 seekBar.setProgress(i);
                 tempoBarText.setText(seekBar.getProgress() + "");
                 sequencer.setBpm(seekBar.getProgress());
+
+                SharedPreferences.Editor editor = patternPreferences.edit();
+                editor.putInt("tempo", seekBar.getProgress());
+                editor.commit();
             }
 
             @Override
@@ -142,41 +286,86 @@ public class SequencerActivity extends AppCompatActivity {
             clearButton.setEnabled(true);
         });
 
-        //Set the names of the tracks
-        textViewRes1 = findViewById(R.id.textview_1);
-        textViewRes2 = findViewById(R.id.textview_2);
-        textViewRes3 = findViewById(R.id.textview_3);
-        textViewRes4 = findViewById(R.id.textview_4);
-
-        textViewRes1.setText(getResources().getResourceEntryName(R.raw.kick));
-        textViewRes2.setText(getResources().getResourceEntryName(R.raw.hhc));
-        textViewRes3.setText(getResources().getResourceEntryName(R.raw.hho));
-        textViewRes4.setText(getResources().getResourceEntryName(R.raw.snare));
-
-        quarterRadioButton.setOnClickListener(v -> quarterRadioButton
-                .setChecked(!eighthRadioButton.isChecked()));
-
-        eighthRadioButton.setOnClickListener(v -> eighthRadioButton
-                .setChecked(!quarterRadioButton.isChecked()));
-
-        clearButton.setOnClickListener(this::clearSeq);
-
-        prepareBoard();
-
-        playButton.setOnClickListener(v -> {
-            playButton.setVisibility(View.INVISIBLE);
-            clearButton.setEnabled(false);
-            sequencer.play();
-        });
     }
 
-    public void pauseSeq(View v) {
-        mySample.pause();
+    void loadPatternPreferences(int selectedPattern) {
+        switch (selectedPattern) {
+            case 0:
+                patternPreferences = getSharedPreferences("patternA", 0);
+                break;
+            case 1:
+                patternPreferences = getSharedPreferences("patternB", 0);
+                break;
+            case 2:
+                patternPreferences = getSharedPreferences("patternC", 0);
+                break;
+            case 3:
+                patternPreferences = getSharedPreferences("patternD", 0);
+                break;
+            default:
+                break;
+        }
     }
 
-    public void playSeq(View v) { mySample.play(); }
+    private void loadPatternConfig() {
+        for (int i = 0; i < numberOfSamples; i++) {
+            for (int j = 0; j < numberOfBeats; j++) {
+                boolean v = patternPreferences.
+                        getBoolean(
+                                "cell" + (i * numberOfBeats + j), false);
+                samplersButtons[i][j].setChecked(v);
+                if (v) {
+                    sequencer.enableCell(i,j);
+                }
+                else {
+                    sequencer.disableCell(i,j);
+                }
+            }
+        }
+    }
 
-    public void clearSeq(View v) { clearBoard(); }
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void onPatternButtonClick(View view) {
+        for (ToggleButton b : patternButtons) {
+            if (!b.equals(findViewById(view.getId()))) {
+                b.setChecked(false);
+            }
+        }
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        switch (view.getId()) {
+            case R.id.a_button:
+                selectedPattern = 0;
+                break;
+            case R.id.b_button:
+                selectedPattern = 1;
+                break;
+            case R.id.c_button:
+                selectedPattern = 2;
+                break;
+            case R.id.d_button:
+                selectedPattern = 3;
+                break;
+            default:
+                break;
+        }
+        editor.putInt("pattern", selectedPattern);
+        editor.commit();
+        loadPatternPreferences(selectedPattern);
+        loadOtherConfigs();
+        updateBoardButtons();
+        loadPatternConfig();
+    }
+
+    public void clearSeq(View v) {
+        clearBoard();
+    }
+
+    private void onLibraryButtonClick(View v) {
+        Intent i = new Intent(SequencerActivity.this, SoundbankActivity.class);
+        startActivityForResult(i, 0);
+    }
 
 
     @Override
@@ -187,7 +376,7 @@ public class SequencerActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        sequencer.play();
+        //sequencer.play();
         super.onResume();
     }
 
@@ -199,37 +388,50 @@ public class SequencerActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Log.e("TEST", "Menu item click");
-        switch (item.getItemId()) {
-            case R.id.select_sample:
-                // file picker
-                Intent i = new Intent(SequencerActivity.this, SoundbankActivity.class);
-                startActivityForResult(i, 0);
-                break;
-            case R.id.toggle_sequencer:
-                sequencer.toggle();
-                break;
-            case R.id.preferences:
-                Intent preferencesActivity = new Intent(getBaseContext(), Preferences.class);
-                startActivityForResult(preferencesActivity, 1);
-                break;
-            case R.id.add_column:
-                Log.e("TEST", "Adding columns");
-                Intent addColumnActivity = new Intent(getBaseContext(), AddColumnPicker.class);
-                startActivityForResult(addColumnActivity, 2);
-                // sequencer.addColumns(amount);
-                break;
+    //Do not need?
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        Log.e("TEST", "Menu item click");
+//        switch (item.getItemId()) {
+//            case R.id.select_sample:
+//                // file picker
+//                Intent i = new Intent(SequencerActivity.this, SoundbankActivity.class);
+//                startActivityForResult(i, 0);
+//                break;
+//            case R.id.toggle_sequencer:
+//                sequencer.toggle();
+//                break;
+//            case R.id.preferences:
+//                Intent preferencesActivity = new Intent(getBaseContext(), Preferences.class);
+//                startActivityForResult(preferencesActivity, 1);
+//                break;
+//            case R.id.add_column:
+//                Log.e("TEST", "Adding columns");
+//                Intent addColumnActivity = new Intent(getBaseContext(), AddColumnPicker.class);
+//                startActivityForResult(addColumnActivity, 2);
+//                // sequencer.addColumns(amount);
+//                break;
+//        }
+//        return false;
+//    }
+
+    public String getProperName(String stringIn) {
+        String s = stringIn.substring(stringIn.lastIndexOf('/')+1);
+        try {
+            int i = Integer.parseInt(s);
+            s = getResources().getResourceEntryName(i);
         }
-        return false;
+        catch (Exception e) { }
+
+        return s;
+
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 0) {
+        if (requestCode == 0 && data != null) {
             Bundle b = data.getExtras();
             String res1 = b.getString("res1");
             String res2 = b.getString("res2");
@@ -241,33 +443,21 @@ public class SequencerActivity extends AppCompatActivity {
             Uri res3Path = Uri.parse(res3);
             Uri res4Path = Uri.parse(res4);
 
-            String s1 = res1.substring(res1.lastIndexOf('/')+1);
-            String s2 = res2.substring(res2.lastIndexOf('/')+1);;
-            String s3 = res3.substring(res3.lastIndexOf('/')+1);
-            String s4 = res4.substring(res4.lastIndexOf('/')+1);
+            String s1 = getProperName(res1);
+            String s2 = getProperName(res2);
+            String s3 = getProperName(res3);
+            String s4 = getProperName(res4);
 
-
-            try {
-                int i1 = Integer.parseInt(s1);
-                s1 = getResources().getResourceEntryName(i1);
-            }
-            catch (Exception e) { }
-            try {
-                int i2 = Integer.parseInt(s2);
-                s2 = getResources().getResourceEntryName(i2);
-            }
-            catch (Exception e) {
-            }
-            try {
-                int i3 = Integer.parseInt(s3);
-                s3 = getResources().getResourceEntryName(i3);
-            }
-            catch (Exception e) { }
-            try {
-                int i4 = Integer.parseInt(s4);
-                s4 = getResources().getResourceEntryName(i4);
-            }
-            catch (Exception e) { }
+            SharedPreferences.Editor editor = patternPreferences.edit();
+            editor.putString("resId1", res1);
+            editor.putString("resId2", res2);
+            editor.putString("resId3", res3);
+            editor.putString("resId4", res4);
+            editor.putString("textViewRes1Text", s1);
+            editor.putString("textViewRes2Text", s2);
+            editor.putString("textViewRes3Text", s3);
+            editor.putString("textViewRes4Text", s4);
+            editor.commit();
 
             textViewRes1.setText(s1);
             textViewRes2.setText(s2);
@@ -333,42 +523,107 @@ public class SequencerActivity extends AppCompatActivity {
         )));
     }
 
-    private void createBoardButtons() {
-        //FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_layout);
-        int width = rootLayout.getLayoutParams().width;
-        int height = rootLayout.getLayoutParams().height;
-
-        int buttonWidth = width / numberOfBeats;
-        int buttonHeight = height / numberOfSamples;
-
-        progressBarView = new ProgressBarView(this, width, height,
-                buttonWidth, sequencer.getBpm());
-        sequencer.setOnBPMListener(progressBarView);
-        rootLayout.addView(progressBarView);
-
-        SamplerToggleListener samplerListener = new SamplerToggleListener(sequencer, this,
+    private void updateBoardButtons() {
+        SamplerToggleListener samplerListener = new SamplerToggleListener(sequencer,
+                patternPreferences, getApplicationContext(),
                 numberOfSamples, numberOfBeats);
 
         for (int samplePos = 0; samplePos < numberOfSamples; samplePos++) {
-            Log.d("Board", "Button width: " + buttonWidth);
             for (int beatPos = 0; beatPos < numberOfBeats; beatPos++) {
-                samplersButtons[samplePos][beatPos] = new ToggleButton(this);
-                samplersButtons[samplePos][beatPos].setTextOff("");
-                samplersButtons[samplePos][beatPos].setTextOn("");
-                samplersButtons[samplePos][beatPos].setText("");
-                samplersButtons[samplePos][beatPos].setBackgroundResource(R.drawable.custom_button);
-                samplersButtons[samplePos][beatPos].setId(numberOfBeats * samplePos + beatPos);
-                GridLayout.LayoutParams param =new GridLayout.LayoutParams();
-                param.height = buttonHeight;
-                param.width = buttonWidth;
-                param.setGravity(Gravity.CENTER);
-                param.columnSpec = GridLayout.spec(beatPos);
-                param.rowSpec = GridLayout.spec(samplePos);
-                samplersButtons[samplePos][beatPos].setLayoutParams(param);
                 samplersButtons[samplePos][beatPos].setOnClickListener(samplerListener);
-                mainLayout.addView(samplersButtons[samplePos][beatPos]);
             }
         }
+
+    }
+
+    private void createBoardButtons() {
+        //FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_layout);
+        ViewTreeObserver vto = rootLayout.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                    rootLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                } else {
+                    rootLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+
+                int width  = rootLayout.getMeasuredWidth();
+                int height = rootLayout.getMeasuredHeight();
+
+                int buttonWidth = width / numberOfBeats;
+                int buttonHeight = height / numberOfSamples;
+
+                progressBarView = new ProgressBarView(getApplicationContext(), width, height,
+                        buttonWidth, sequencer.getBpm());
+                sequencer.setOnBPMListener(progressBarView);
+                rootLayout.addView(progressBarView);
+
+                SamplerToggleListener samplerListener = new SamplerToggleListener(sequencer,
+                        patternPreferences, getApplicationContext(),
+                        numberOfSamples, numberOfBeats);
+
+                for (int samplePos = 0; samplePos < numberOfSamples; samplePos++) {
+                    Log.d("Board", "Button width: " + buttonWidth);
+                    for (int beatPos = 0; beatPos < numberOfBeats; beatPos++) {
+                        samplersButtons[samplePos][beatPos] = new ToggleButton(getApplicationContext());
+                        samplersButtons[samplePos][beatPos].setTextOff("");
+                        samplersButtons[samplePos][beatPos].setTextOn("");
+                        samplersButtons[samplePos][beatPos].setText("");
+                        samplersButtons[samplePos][beatPos].setBackgroundResource(R.drawable.custom_button);
+                        samplersButtons[samplePos][beatPos].setId(numberOfBeats * samplePos + beatPos);
+                        GridLayout.LayoutParams param =new GridLayout.LayoutParams();
+                        param.height = buttonHeight;
+                        param.width = buttonWidth;
+                        param.setGravity(Gravity.CENTER);
+                        param.columnSpec = GridLayout.spec(beatPos);
+                        param.rowSpec = GridLayout.spec(samplePos);
+                        samplersButtons[samplePos][beatPos].setLayoutParams(param);
+                        samplersButtons[samplePos][beatPos].setOnClickListener(samplerListener);
+                        mainLayout.addView(samplersButtons[samplePos][beatPos]);
+                    }
+                }
+
+                loadPatternConfig();
+
+            }
+        });
+
+
+//        int width = rootLayout.getLayoutParams().width;
+//        int height = rootLayout.getLayoutParams().height;
+
+//        int buttonWidth = width / numberOfBeats;
+//        int buttonHeight = height / numberOfSamples;
+//
+//        progressBarView = new ProgressBarView(this, width, height,
+//                buttonWidth, sequencer.getBpm());
+//        sequencer.setOnBPMListener(progressBarView);
+//        rootLayout.addView(progressBarView);
+//
+//        SamplerToggleListener samplerListener = new SamplerToggleListener(sequencer, this,
+//                numberOfSamples, numberOfBeats);
+//
+//        for (int samplePos = 0; samplePos < numberOfSamples; samplePos++) {
+//            Log.d("Board", "Button width: " + buttonWidth);
+//            for (int beatPos = 0; beatPos < numberOfBeats; beatPos++) {
+//                samplersButtons[samplePos][beatPos] = new ToggleButton(this);
+//                samplersButtons[samplePos][beatPos].setTextOff("");
+//                samplersButtons[samplePos][beatPos].setTextOn("");
+//                samplersButtons[samplePos][beatPos].setText("");
+//                samplersButtons[samplePos][beatPos].setBackgroundResource(R.drawable.custom_button);
+//                samplersButtons[samplePos][beatPos].setId(numberOfBeats * samplePos + beatPos);
+//                GridLayout.LayoutParams param =new GridLayout.LayoutParams();
+//                param.height = buttonHeight;
+//                param.width = buttonWidth;
+//                param.setGravity(Gravity.CENTER);
+//                param.columnSpec = GridLayout.spec(beatPos);
+//                param.rowSpec = GridLayout.spec(samplePos);
+//                samplersButtons[samplePos][beatPos].setLayoutParams(param);
+//                samplersButtons[samplePos][beatPos].setOnClickListener(samplerListener);
+//                mainLayout.addView(samplersButtons[samplePos][beatPos]);
+//            }
+//        }
     }
 
     private void clearBoard() {
@@ -376,7 +631,10 @@ public class SequencerActivity extends AppCompatActivity {
             for (int i = 0; i < mainLayout.getChildCount(); i++) {
                 View v = mainLayout.getChildAt(i);
                 if (v instanceof ToggleButton) {
+                    SharedPreferences.Editor editor = patternPreferences.edit();
                     ((ToggleButton) v).setChecked(false);
+                    editor.putBoolean("cell" + i, ((ToggleButton) v).isChecked());
+                    editor.commit();
                 }
             }
         }
