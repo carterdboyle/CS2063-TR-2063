@@ -1,7 +1,9 @@
 package ca.unb.mobiledev.tr2063drumsequencer;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -152,7 +154,7 @@ public class RecorderActivity extends AppCompatActivity {
 
         // Record to the external cache directory for visibility
         fileName = getFilesDir().getAbsolutePath();
-        fileName += "/audiorecordtest.3gp";
+        fileName += "/sample.3gp";
 
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
 
@@ -169,7 +171,25 @@ public class RecorderActivity extends AppCompatActivity {
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         0));
+        Button doneButton = new Button(this);
+        doneButton.setText("Done");
+        doneButton.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                0)
+        );
+        doneButton.setOnClickListener(this::onDoneButtonClick);
+        ll.addView(doneButton,
+                new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        0));
         setContentView(ll);
+    }
+
+    private void onDoneButtonClick(View view) {
+        Intent returnIntent = new Intent(this, PadActivity.class);
+        startActivity(returnIntent);
     }
 
     @Override

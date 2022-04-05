@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
@@ -27,6 +28,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.gridlayout.widget.GridLayout;
 import android.widget.ImageButton;
@@ -95,9 +97,15 @@ public class SequencerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Do a sharedpreferences save of this and tempo as well
+        
         sequencer = new Sequencer(this, numberOfSamples, numberOfBeats);
+
+        if (getResources().getConfiguration().orientation ==
+                Configuration.ORIENTATION_PORTRAIT){
+            Intent drumPadIntent = new Intent(this, PadActivity.class);
+            startActivity(drumPadIntent);
+            return;
+        }
 
         //Get sharedPreferences
         sharedPreferences = getSharedPreferences("sequencer", 0);
@@ -129,7 +137,6 @@ public class SequencerActivity extends AppCompatActivity {
         tempoText = findViewById(R.id.tempoText);
 
         //quarterRadioButton.setChecked(true);
-
 
 
         //Set the names of the tracks
