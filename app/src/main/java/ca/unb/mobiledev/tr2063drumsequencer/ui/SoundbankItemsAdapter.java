@@ -35,7 +35,7 @@ public class SoundbankItemsAdapter extends ArrayAdapter<SoundbankItem> {
         //  Set the text used by tvName and tvNum using the data object
         //  This will need to updated once the entity model has been updated
         tvName.setText(item.getName());
-        tvId.setText(String.valueOf(item.getId()));
+        //tvId.setText(String.valueOf(item.getId()));
 
         // Return the completed view to render on screen
         return convertView;

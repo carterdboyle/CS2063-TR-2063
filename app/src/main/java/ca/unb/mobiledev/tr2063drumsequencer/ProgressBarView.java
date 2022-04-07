@@ -47,7 +47,7 @@ public class ProgressBarView extends View implements OnBPMListener {
     // All the sizes are in pixels
     int totalWidth, barHeight, currentBarXPos, beatLength;
 
-    private static int barColor = Color.YELLOW;
+    private static int barColor = Color.BLACK;
 
     private static final int BAR_TRANSPARENCY = 200;
 

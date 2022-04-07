@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -43,6 +45,14 @@ public class SoundbankCreationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_soundbank_creation);
 
+        int currentOrientation = getResources().getConfiguration().orientation;
+        if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        }
+        else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+        }
+
         nameEditText = findViewById(R.id.name_edittext);
         res1PathTextView = findViewById(R.id.res1_path_textview);
         res2PathTextView = findViewById(R.id.res2_path_textview);
@@ -74,9 +84,9 @@ public class SoundbankCreationActivity extends AppCompatActivity {
         });
 
         createSoundbankButton.setOnClickListener(l -> {
-            if (nameEditText.getText() == null || res1PathTextView.getText() == null
-                || res2PathTextView.getText() == null || res3PathTextView.getText() == null
-                || res4PathTextView.getText() == null) {
+            if (nameEditText.getText() == null || res1PathTextView.getText().toString().isEmpty()
+                || res2PathTextView.getText().toString().isEmpty() || res3PathTextView.getText().toString().isEmpty()
+                || res4PathTextView.getText().toString().isEmpty()) {
                 new AlertDialog.Builder(this).setIcon(R.drawable.icon)
                         .setTitle("No fields can be empty!")
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {

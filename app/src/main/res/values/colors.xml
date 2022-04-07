@@ -29,4 +29,10 @@
         <!-- Green style gradient -->
     <color name="greenstartcolor">#b4fa51</color>
     <color name="greenndcolor">#78cb29</color>
+        <!-- Yellow style gradient -->
+    <color name="yellowstartcolor">#FFD736</color>
+    <color name="yellowendcolor">#ECBD00</color>
+        <!-- Red style gradient -->
+    <color name="redstartcolor">#FF0000</color>
+    <color name="redendcolor">#FF3046</color>
 </resources>

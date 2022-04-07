@@ -231,11 +231,20 @@ public class Sequencer {
         }
     }
 
+    public void stopAllPlayers() {
+        for (AsyncPlayer a : players) {
+            if (a != null) {
+                a.stop();
+            }
+        }
+    }
+
     /**
      * Stop the playback.
      */
     public void stop() {
         playing = false;
+        stopAllPlayers();
     }
 
     /**

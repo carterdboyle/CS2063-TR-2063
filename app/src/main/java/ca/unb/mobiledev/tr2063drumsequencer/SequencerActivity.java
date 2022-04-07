@@ -187,6 +187,7 @@ public class SequencerActivity extends AppCompatActivity {
         sequencer.setSample(1, Uri.parse(res2));
         sequencer.setSample(2, Uri.parse(res3));
         sequencer.setSample(3, Uri.parse(res4));
+        sequencer.setBpm(tempo);
 
         String[] patternLabels = {"A", "B", "C", "D"};
 
@@ -260,8 +261,8 @@ public class SequencerActivity extends AppCompatActivity {
         textViewRes3.setText(textViewRes3Text);
         textViewRes4.setText(textViewRes4Text);
 
-        tempoBar.setMin(60);
-        tempoBar.setMax(260);
+        //tempoBar.setMin(60);
+        tempoBar.setMax(200);
         tempoBar.setProgress(tempo);
 
         tempoBarText.setText(tempoBar.getProgress() + "");
@@ -269,7 +270,9 @@ public class SequencerActivity extends AppCompatActivity {
         tempoBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                seekBar.setProgress(i);
+                if (tempoBar.getProgress() <= 60)  {
+                    tempoBar.setProgress(60);
+                }
                 tempoBarText.setText(seekBar.getProgress() + "");
                 sequencer.setBpm(seekBar.getProgress());
 
@@ -359,6 +362,7 @@ public class SequencerActivity extends AppCompatActivity {
         }
         editor.putInt("pattern", selectedPattern);
         editor.commit();
+        sequencer.stopAllPlayers();
         loadPatternPreferences(selectedPattern);
         loadOtherConfigs();
         updateBoardButtons();
@@ -370,6 +374,9 @@ public class SequencerActivity extends AppCompatActivity {
     }
 
     private void onLibraryButtonClick(View v) {
+        sequencer.stop();
+        playButton.setVisibility(View.VISIBLE);
+        clearButton.setEnabled(true);
         Intent i = new Intent(SequencerActivity.this, SoundbankActivity.class);
         startActivityForResult(i, 0);
     }

@@ -195,6 +195,22 @@ public class PadActivity extends AppCompatActivity {
         thandler.start();
     }
 
+    public void stopAllPads() {
+        if (asyncPlayers != null) {
+            for (AsyncPlayer a : asyncPlayers) {
+                if (a != null) {
+                    a.stop();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopAllPads();
+    }
+
     public void onLibraryButtonClick(View v) {
         Intent soundBankIntent = new Intent(this,SoundbankActivity.class);
         startActivityForResult(soundBankIntent, SOUNDBANK_REQUEST_CODE);

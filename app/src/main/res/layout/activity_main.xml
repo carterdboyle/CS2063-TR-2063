@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:background="#DBDDF4"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="10dp"
@@ -20,21 +20,21 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Selected bank:"
-            android:textColor="#FFFFFF" />
+            android:textColor="#000000" />
 
         <TextView
             android:id="@+id/soundbank_name_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FF000000" />
 
         <Button
             android:id="@+id/pad_library_button"
             android:layout_width="100dp"
             android:layout_height="50dp"
-            android:layout_weight="0"
-            android:text="Library" />
+            android:layout_weight="0.33"
+            android:background="@drawable/library_button" />
     </LinearLayout>
 
     <LinearLayout
@@ -48,20 +48,26 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:gravity="center"
             android:orientation="horizontal">
 
             <Button
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:background="@drawable/orange_button" />
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/tr2063_button" />
 
             <Button
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:layout_marginLeft="5dp"
-                android:background="@drawable/green_button" />
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/tr2063_button" />
         </LinearLayout>
 
         <LinearLayout
@@ -71,15 +77,22 @@
             android:orientation="horizontal">
 
             <Button
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:background="@drawable/blue_button" />
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/tr2063_button" />
 
             <Button
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:layout_marginLeft="5dp"
-                android:background="@drawable/pink_button" />
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/tr2063_button" />
         </LinearLayout>
     </LinearLayout>
 
@@ -90,10 +103,10 @@
 
         <Button
             android:id="@+id/pad_record_button"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="RECORD" />
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_weight="0.33"
+            android:background="@drawable/record_button" />
     </LinearLayout>
 
 

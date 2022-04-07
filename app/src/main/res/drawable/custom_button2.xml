@@ -8,15 +8,15 @@
             <corners android:radius="25dp" />
 
             <gradient android:angle="270"
-                android:endColor="#D6E7B3"
-                android:startColor="#95C03B" />
+                android:endColor="@color/redstartcolor"
+                android:startColor="@color/redendcolor" />
         </shape>
     </item>
     <item>
         <shape>
         <gradient
-            android:startColor="#666666"
-            android:endColor="#999999"
+            android:startColor="@color/yellowstartcolor"
+            android:endColor="@color/yellowendcolor"
             android:angle="270" />
         <stroke
             android:width="3dp"

@@ -25,16 +25,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginBottom="15dp"
         android:layout_weight="1"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/library_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="15dp"
             android:layout_weight="1"
-            android:text="Library" />
+            android:background="@drawable/long_library_button"
+            android:textAlignment="center" />
 
         <TextView
             android:id="@+id/textView"
@@ -48,29 +52,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp"
+            android:paddingRight="5dp"
+            android:paddingBottom="5dp">
 
             <TextView
                 android:id="@+id/tempoText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="20dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/tempo_text" />
+                android:text="@string/tempo_text"
+                android:textSize="10sp" />
 
             <SeekBar
                 android:id="@+id/tempoBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="25dp"
                 android:layout_gravity="center"
                 android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/tempoBarText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="25dp"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:textSize="12sp"
                 tools:text="120" />
         </LinearLayout>
     </LinearLayout>
@@ -150,35 +160,31 @@
 
             <ToggleButton
                 android:id="@+id/a_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_button2"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
                 android:layout_weight="1"
-                android:text="A" />
+                android:background="@drawable/custom_button2"/>
 
             <ToggleButton
                 android:id="@+id/b_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_button2"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
                 android:layout_weight="1"
-                android:text="B" />
+                android:background="@drawable/custom_button2"/>
 
             <ToggleButton
                 android:id="@+id/c_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
                 android:background="@drawable/custom_button2"
-                android:layout_weight="1"
-                android:text="C" />
+                android:layout_weight="1"/>
 
             <ToggleButton
                 android:id="@+id/d_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
                 android:background="@drawable/custom_button2"
-                android:layout_weight="1"
-                android:text="D" />
+                android:layout_weight="1"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -188,27 +194,39 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
 
         <ImageButton
             android:id="@+id/playButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="playSeq"
-            android:src="@android:drawable/ic_media_play" />
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/play_button" />
 
         <ImageButton
             android:id="@+id/pauseButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="pauseSeq"
-            android:src="@android:drawable/ic_media_pause" />
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/pause_button" />
 
         <Button
             android:id="@+id/clearButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/clear_text" />
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/clearpattern_button" />
     </LinearLayout>
 
 </LinearLayout>
