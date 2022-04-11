@@ -113,6 +113,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:imeOptions="actionDone"
                 android:text="HH Closed"
                 android:textAlignment="viewEnd"
                 android:textSize="12sp" />
@@ -122,6 +123,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:imeOptions="actionDone"
                 android:text="@string/snare_text"
                 android:textAlignment="viewEnd"
                 android:textSize="12sp" />
@@ -130,6 +132,7 @@
                 android:id="@+id/textview_4"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:imeOptions="actionDone"
                 android:layout_weight="1"
                 android:text="@string/kick_text"
                 android:textAlignment="viewEnd"

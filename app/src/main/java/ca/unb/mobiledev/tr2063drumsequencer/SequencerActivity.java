@@ -165,7 +165,6 @@ public class SequencerActivity extends AppCompatActivity {
         });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     private void loadOtherConfigs() {
         String defaultRes1 = "android.resource:" + "//" +
                 getApplicationContext().getPackageName() + "/" + R.raw.kick;
@@ -261,7 +260,6 @@ public class SequencerActivity extends AppCompatActivity {
         textViewRes3.setText(textViewRes3Text);
         textViewRes4.setText(textViewRes4Text);
 
-        //tempoBar.setMin(60);
         tempoBar.setMax(200);
         tempoBar.setProgress(tempo);
 
@@ -334,7 +332,6 @@ public class SequencerActivity extends AppCompatActivity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     private void onPatternButtonClick(View view) {
         for (ToggleButton b : patternButtons) {
             if (!b.equals(findViewById(view.getId()))) {
@@ -394,41 +391,6 @@ public class SequencerActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return true;
-    }
-
-    //Do not need?
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        Log.e("TEST", "Menu item click");
-//        switch (item.getItemId()) {
-//            case R.id.select_sample:
-//                // file picker
-//                Intent i = new Intent(SequencerActivity.this, SoundbankActivity.class);
-//                startActivityForResult(i, 0);
-//                break;
-//            case R.id.toggle_sequencer:
-//                sequencer.toggle();
-//                break;
-//            case R.id.preferences:
-//                Intent preferencesActivity = new Intent(getBaseContext(), Preferences.class);
-//                startActivityForResult(preferencesActivity, 1);
-//                break;
-//            case R.id.add_column:
-//                Log.e("TEST", "Adding columns");
-//                Intent addColumnActivity = new Intent(getBaseContext(), AddColumnPicker.class);
-//                startActivityForResult(addColumnActivity, 2);
-//                // sequencer.addColumns(amount);
-//                break;
-//        }
-//        return false;
-//    }
-
     public String getProperName(String stringIn) {
         String s = stringIn.substring(stringIn.lastIndexOf('/')+1);
         try {
@@ -484,40 +446,6 @@ public class SequencerActivity extends AppCompatActivity {
             sequencer.setSample(3, res4Path);
 
         }
-
-//        switch (requestCode) {
-//            case 0:
-//                if (resultCode == Activity.RESULT_OK) {
-//                    Uri path = (Uri) data.getExtras().get("path");
-//                    Log.i("ANDROIDEXPLORER", "path: " + path);
-//                    // reset the latest sample
-//                    sequencer.setSample(3, path);
-//                    // TODO it should actually add a new sample rather than
-//                    // overwriting an existing one
-//                    // TODO rethink the ui so it allows addition/removing
-//                    // samples on
-//                    // runtime
-//                } else if (resultCode == RESULT_CANCELED) {
-//                    // User didn't select a file. Nothing to do here.
-//                }
-//                break;
-//            case 1:
-//                if (resultCode == 1) {
-//                    // Coming from preferences
-//                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-//                    String newBpm = prefs.getString("bpm", "120");
-//                    Log.e("TEST", "new bpm is " + Integer.parseInt(newBpm));
-//                    sequencer.setBpm(Integer.parseInt(newBpm));
-//                }
-//                break;
-//            case 2:
-//                Bundle b = data.getExtras();
-//                int amount = b.getInt("amount");
-//                Log.e("TEST", "Adding " + amount + " columns");
-//                break;
-//            default:
-//                break;
-//        }
     }
 
     private void prepareBoard() {

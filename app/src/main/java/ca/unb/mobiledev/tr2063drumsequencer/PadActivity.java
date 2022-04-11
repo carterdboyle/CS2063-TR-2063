@@ -24,8 +24,6 @@ public class PadActivity extends AppCompatActivity {
 
     private Button[] pads;
     private AsyncPlayer[] asyncPlayers;
-    private SoundPool soundPool;
-    private int[] soundPoolIds;
     private Uri[] uris;
     private String[] resStrings;
     private final int numberOfSamples = 4;
@@ -41,7 +39,6 @@ public class PadActivity extends AppCompatActivity {
     private TextView soundbankNameTextView;
 
     private static final int SOUNDBANK_REQUEST_CODE = 400;
-    private static final int RECORD_REQUEST_CODE = 500;
 
 
     @Override
@@ -67,7 +64,6 @@ public class PadActivity extends AppCompatActivity {
         asyncPlayers = new AsyncPlayer[numberOfSamples];
         uris = new Uri[numberOfSamples];
         resStrings = new String[numberOfSamples];
-        soundPoolIds = new int[numberOfSamples];
 
         loadPreferences();
         setupPadListeners();
@@ -99,13 +95,13 @@ public class PadActivity extends AppCompatActivity {
     }
 
     private void loadPreferences() {
-        String defaultRes1 = "android:resource//" + this.getPackageName() +
+        String defaultRes1 = "android.resource://" + this.getPackageName() +
                 "/" + R.raw.kick;
-        String defaultRes2 = "android:resource//" + this.getPackageName() +
+        String defaultRes2 = "android.resource://" + this.getPackageName() +
                 "/" + R.raw.hhc;
-        String defaultRes3 = "android:resource//" + this.getPackageName() +
+        String defaultRes3 = "android.resource://" + this.getPackageName() +
                 "/" + R.raw.hho;
-        String defaultRes4 = "android:resource//" + this.getPackageName() +
+        String defaultRes4 = "android.resource://" + this.getPackageName() +
                 "/" + R.raw.snare;
 
 
@@ -119,7 +115,6 @@ public class PadActivity extends AppCompatActivity {
         for (int i = 0; i < uris.length; i++) {
             uris[i] = Uri.parse(resStrings[i]);
             asyncPlayers[i] = new AsyncPlayer(String.valueOf(i+1));
-            //soundPoolIds[i] = soundPool.load(resStrings[i],0);
         }
 
         attributes = new AudioAttributes.Builder()
