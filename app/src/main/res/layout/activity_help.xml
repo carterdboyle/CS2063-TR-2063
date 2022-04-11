@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/help_title_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:text="How to Use"
+        android:textAlignment="center"
+        android:textColor="@color/pad_yellow"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/help_howtouse_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:scrollbars="vertical"
+        android:text="@string/how_to_use_text"
+        android:textAlignment="viewStart"
+        android:textColor="@color/pad_yellow"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/help_ok_button"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/tr2063_button"
+        android:text="ok" />
+</LinearLayout>
